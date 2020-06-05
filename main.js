@@ -27,4 +27,68 @@ function createTable() {
 
 
 
+var weightValue, profitValue
+var profit = [];
+var weight = [];
+var profit_weight = []
+var tempList = []
+var i, j, knapsackResultantProfit = 0;
+
+function generateResult() {
+
+    var resultClass = document.getElementsByClassName("result");
+    console.log(resultClass.length);
+    
+    for (i = 0; i < resultClass.length; i++) {
+        resultClass[i].style.visibility = "visible";
+    }
+
+
+    profit = [];
+    weight = [];
+    profit_weight = []
+    knapsackResultantProfit = 0
+
+    var tableId = document.getElementById("table")
+    for (var i = 1; i <= num_rows; i++) {
+        weightValue = tableId.rows[i].cells[1].children[0].value;
+        weight.push(weightValue)
+        profitValue = tableId.rows[i].cells[2].children[0].value;
+        profit.push(profitValue)
+    }
+    sortLists()
+
+    console.log("profit = " + profit);
+    console.log("weight = " + weight);
+    console.log("profit/weight = " + profit_weight);
+    console.log(knapsackResultantProfit);
+
+}
+
+
+function sortLists() {
+
+    // to find profit/weight
+    for (i = 0; i < num_rows; i++) {
+        profit_weight[i] = (profit[i] / weight[i])
+    }
+
+    // to sort profit/weight in decreasing order along with profit and weight list
+    var list = [];
+    for (i = 0; i < num_rows; i++)
+        list.push({ 'profit_weight': profit_weight[i], 'profit': profit[i], 'weight': weight[i] });
+
+
+    list.sort(function (a, b) {
+        return ((a.profit_weight > b.profit_weight) ? -1 : ((a.profit_weight == b.profit_weight) ? 0 : 1));
+    });
+
+    for (i = 0; i < num_rows; i++) {
+        profit_weight[i] = (list[i].profit_weight.toFixed(2))
+        profit[i] = list[i].profit;
+        weight[i] = list[i].weight;
+    }
+}
+
+
 
