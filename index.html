@@ -6,25 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Knapsack Calculator</title>
 
+
+
+    <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+
+
+    <!-- Then include bootstrap js -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+
+
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
         integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
-
 
 
 </head>
 
 <body>
 
+
+    <div class="text-center page-header">
+        <h1>Knapsack Calculator</h1>
+    </div>
 
     <div class="container">
         <div class="row justify-content-md-center">
@@ -42,24 +47,25 @@
                     <div class="input-group-addon">
                         <span class="glyphicon glyphicon-th-list"></span>
                     </div>
-                    <input class="form-control" id="rows" type="number" placeholder="Enter number of Rows"/>
+                    <input class="form-control" id="rows" type="number" placeholder="Enter number of Items" />
                 </div>
             </div>
         </div>
 
 
         <div class="text-center">
-            <button type="button" class="btn btn-primary" onclick="createTable();">Generate Table</button>
+            <button type="button" class="generateTable btn btn-primary" onclick="createTable();">Generate Table</button>
         </div>
 
 
-        <div id="wrapper"></div>
+        <div class="table" id="wrapper"></div>
 
         <div class="text-center">
-            <button type="button" class="btn btn-success" onclick="generateResult();">Generate Result</button>
+            <button type="button" class="generateResult btn btn-success" onclick="generateResult();">Calculate</button>
         </div>
 
     </div>
+
 
     <hr>
 
@@ -79,10 +85,12 @@
                 <h2 id="kpProfit"></h2>
                 <h4>Weight</h4>
                 <h2 id="kpWeight"></h2>
+                <h4>Resultant Solution</h4>
+                <h2 id="kpResultantSolution"></h2>
             </div>
 
-            
-             <div class="resultContainer col-md-6">
+
+            <div class="resultContainer col-md-6">
 
                 <h1>Knapsack 0-1</h1>
                 <h4>Resultant Table</h4>
@@ -94,8 +102,9 @@
                 <h4>Weight</h4>
                 <h2 id="kp01Weight"></h2>
             </div>
-            
+
         </div>
+
     </div>
 
 
