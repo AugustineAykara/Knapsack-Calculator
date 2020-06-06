@@ -31,6 +31,9 @@ var kpWeightId = document.getElementById("kpWeight")
 var kpProfitWeightId = document.getElementById("kpProfitWeight")
 var kpResultantSolutionId = document.getElementById("kpResultantSolution")
 
+var kp01ResultantProfitId = document.getElementById("kp01ResultantProfit")
+var kp01ProfitId = document.getElementById("kp01Profit")
+var kp01WeightId = document.getElementById("kp01Weight")
 
 var weightValue, profitValue
 var profit = [];
@@ -61,6 +64,7 @@ function generateResult() {
         profitValue = tableId.rows[i].cells[2].children[0].value;
         profit.push(profitValue)
     }
+    knapsack01Algorithm()
     sortLists()
 
     console.log("profit = " + profit);
@@ -117,3 +121,49 @@ function knapsackAlgorithm() {
     kpProfitWeightId.innerHTML = profit_weight
 }
 
+
+
+// applying knapsack 0/1 algorithm
+function knapsack01Algorithm() {
+    var knapsackTable = new Array(num_rows)
+    for (i = 0; i <= num_rows; i++) {
+
+        knapsackTable[i] = Array(knapsackCapacity)
+        for (j = 0; j <= knapsackCapacity; j++) {
+            knapsackTable[i][j] = 0
+        }
+    }
+
+    var theader = '<table class="table table-bordered">';
+    var tbody = '';
+
+    for (i = 1; i <= num_rows; i++) {
+        for (j = 0; j <= knapsackCapacity; j++) {
+            if (weight[i - 1] <= j) {
+                knapsackTable[i][j] = (Math.max(knapsackTable[i - 1][j], +knapsackTable[i - 1][j - weight[i - 1]] + +profit[i - 1]));
+                tbody += '<td>';
+                tbody += knapsackTable[i][j];
+                tbody += '</td>'
+            }
+            else {
+                knapsackTable[i][j] = knapsackTable[i - 1][j]
+                tbody += '<td>';
+                tbody += knapsackTable[i][j];
+                tbody += '</td>'
+            }
+        }
+        tbody += '</tr></tbody>\n';
+    }
+
+    var tfooter = '</table>';
+    document.getElementById('knapsackTable').innerHTML = theader + tbody + tfooter;
+
+    console.log(knapsackTable);
+    console.log(knapsackTable[num_rows][knapsackCapacity]);
+
+
+    kp01ResultantProfitId.innerHTML = knapsackTable[num_rows][knapsackCapacity]
+    kp01ProfitId.innerHTML = profit
+    kp01WeightId.innerHTML = weight
+
+}
