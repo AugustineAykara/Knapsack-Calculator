@@ -25,6 +25,11 @@ function createTable() {
 }
 
 
+var kpResultantProfitId = document.getElementById("kpResultantProfit")
+var kpProfitId = document.getElementById("kpProfit")
+var kpWeightId = document.getElementById("kpWeight")
+var kpProfitWeightId = document.getElementById("kpProfitWeight")
+var kpResultantSolutionId = document.getElementById("kpResultantSolution")
 
 
 var weightValue, profitValue
@@ -61,6 +66,7 @@ function generateResult() {
     console.log("profit = " + profit);
     console.log("weight = " + weight);
     console.log("profit/weight = " + profit_weight);
+    knapsackAlgorithm()
     console.log(knapsackResultantProfit);
 
 }
@@ -91,4 +97,23 @@ function sortLists() {
 }
 
 
+// applying knapsack algorithm
+function knapsackAlgorithm() {
+
+    for (i = 0; i < num_rows; i++) {
+        if (weight[i] <= knapsackCapacity) {
+            knapsackCapacity -= weight[i]
+            knapsackResultantProfit += profit[i]
+        }
+        else {
+            knapsackResultantProfit = +knapsackResultantProfit + +(profit[i] * (knapsackCapacity / weight[i]))
+            break
+        }
+    }
+
+    kpResultantProfitId.innerHTML = knapsackResultantProfit.toFixed(2)
+    kpProfitId.innerHTML = profit
+    kpWeightId.innerHTML = weight
+    kpProfitWeightId.innerHTML = profit_weight
+}
 
