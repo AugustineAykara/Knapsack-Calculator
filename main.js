@@ -46,18 +46,21 @@ var i, j, knapsackResultantProfit = 0;
 
 function generateResult() {
 
+    knapsackCapacity = document.getElementById('capacity').value;
+    num_rows = document.getElementById('rows').value;
+    
+    knapsackResultantProfit = 0;
+    profit = [];
+    weight = [];
+    profit_weight = []
+    tempList = []
+
     var resultClass = document.getElementsByClassName("result");
     console.log(resultClass.length);
     
     for (i = 0; i < resultClass.length; i++) {
         resultClass[i].style.visibility = "visible";
     }
-
-
-    profit = [];
-    weight = [];
-    profit_weight = []
-    knapsackResultantProfit = 0
 
     var tableId = document.getElementById("table")
     for (var i = 1; i <= num_rows; i++) {
