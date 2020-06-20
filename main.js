@@ -4,7 +4,7 @@ var knapsackCapacity
 function createTable() {
     knapsackCapacity = document.getElementById('capacity').value;
     num_rows = document.getElementById('rows').value;
-    var theader = '<table class="table table-bordered" id="table"> <tr><th scope="col">Items</th> <th scope="col">Weight</th><th scope="col">Profit</th></tr>';
+    var theader = '<table class="table table-bordered" id="table"> <tr><th scope="col">Items</th> <th scope="col">Profit</th> <th scope="col">Weight</th></tr>';
     var tbody = '';
 
     for (var i = 0; i < num_rows; i++) {
@@ -64,10 +64,11 @@ function generateResult() {
 
     var tableId = document.getElementById("table")
     for (var i = 1; i <= num_rows; i++) {
-        weightValue = tableId.rows[i].cells[1].children[0].value;
-        weight.push(weightValue)
-        profitValue = tableId.rows[i].cells[2].children[0].value;
+        profitValue = tableId.rows[i].cells[1].children[0].value;
         profit.push(profitValue)
+        tempList.push(profitValue)
+        weightValue = tableId.rows[i].cells[2].children[0].value;
+        weight.push(weightValue)        
     }
     knapsack01Algorithm()
     sortLists()
@@ -86,10 +87,8 @@ function sortLists() {
     // to find profit/weight
     for (i = 0; i < num_rows; i++) {
         profit_weight[i] = (profit[i] / weight[i])
-    }
-    tempList = profit_weight.slice()
+    }       
     console.log(tempList);
-    
 
     // to sort profit/weight in decreasing order along with profit and weight list
     var list = [];
@@ -102,12 +101,18 @@ function sortLists() {
     });
 
     for (i = 0; i < num_rows; i++) {
-        profit_weight[i] = (list[i].profit_weight.toFixed(2))
+        profit_weight[i] = +(list[i].profit_weight).toFixed(3)
         profit[i] = list[i].profit;
         weight[i] = list[i].weight;
     }
 }
 
+// 9    4   4   2.5     2.5     2   0.625       >profit/weight
+// 18   20  12  25      10      22  5           >profit
+// 2    5   3   10      4       11  8           >weight
+// 23
+
+// 20, 25, 10, 12, 5, 22, 1 
 
 // applying knapsack algorithm
 function knapsackAlgorithm() {
@@ -116,19 +121,19 @@ function knapsackAlgorithm() {
         if (weight[i] <= knapsackCapacity) {
             knapsackCapacity -= weight[i]
             knapsackResultantProfit += +profit[i]
-            tempList[profit_weight.indexOf(profit_weight[i])] = 1
+            tempList[tempList.indexOf(profit[i])] = 1
         }
         else if(knapsackCapacity != 0) {
             knapsackResultantProfit = +knapsackResultantProfit + +(profit[i] * (knapsackCapacity / weight[i]))
-            tempList[profit_weight.indexOf(profit_weight[i])] = (knapsackCapacity / weight[i]).toFixed(2)
+            tempList[tempList.indexOf(profit[i])] = knapsackCapacity + "/" + weight[i]
             knapsackCapacity = 0
         }
         else {
-            tempList[profit_weight.indexOf(profit_weight[i])] = 0
+            tempList[tempList.indexOf(profit[i])] = 0
         }
     }
 
-    kpResultantProfitId.innerHTML = knapsackResultantProfit.toFixed(2)
+    kpResultantProfitId.innerHTML = +knapsackResultantProfit.toFixed(3)
     kpProfitId.innerHTML = profit
     kpWeightId.innerHTML = weight
     kpProfitWeightId.innerHTML = profit_weight
