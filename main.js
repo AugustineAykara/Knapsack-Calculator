@@ -20,8 +20,6 @@ function createTable() {
     document.getElementById('wrapper').innerHTML = tableHeader + tableBody + tableFooter;
 }
 
-var tempList = [];
-
 function generateResult() {
     
     const knapsackCapacity = document.getElementById('capacity').value;
@@ -32,7 +30,6 @@ function generateResult() {
 
     // Variables for storing values taken from user; before adding them to the profit and weight arrays.
     var weightValue, profitValue;
-    tempList = [];
 
     var resultClass = document.getElementsByClassName("result");
     console.log(resultClass.length);
@@ -45,8 +42,6 @@ function generateResult() {
     for (var i = 1; i <= numOfObjects; i++) {
         profitValue = tableId.rows[i].cells[1].children[0].value;
         profitArr.push(profitValue);
-        
-        tempList.push(profitValue);
         
         weightValue = tableId.rows[i].cells[2].children[0].value;
         weightArr.push(weightValue);
@@ -64,7 +59,6 @@ function sortLists(densityArr, profitArr, weightArr, numOfObjects) {
     for (var i = 0; i < numOfObjects; i++) {
         densityArr[i] = (profitArr[i] / weightArr[i]);
     }       
-    console.log(tempList);
 
     // to sort density in decreasing order along with profit and weight list
     var list = [];
@@ -93,12 +87,17 @@ function sortLists(densityArr, profitArr, weightArr, numOfObjects) {
 // applying knapsack algorithm
 function knapsackAlgorithm(knapsackCapacity, profitArr, weightArr, numOfObjects) {
 
+
     // An array for storing the densities of the objects.
     const densityArr = [];
     sortLists(densityArr, profitArr, weightArr, numOfObjects);
 
     // A variable for storing the resultant profit of the knapsack; initialized with 0.
     var knapsackResultantProfit = 0;
+
+
+    // An array for storing the solution of the problem
+    const kpResultantSolutionArr = [];
 
 
     const kpResultantProfitId = document.getElementById("kpResultantProfit");
@@ -111,15 +110,15 @@ function knapsackAlgorithm(knapsackCapacity, profitArr, weightArr, numOfObjects)
         if (weightArr[i] <= knapsackCapacity) {
             knapsackCapacity -= weightArr[i];
             knapsackResultantProfit += +profitArr[i];
-            tempList[tempList.indexOf(profitArr[i])] = 1;
+            kpResultantSolutionArr[i] = 1;
         }
         else if(knapsackCapacity != 0) {
             knapsackResultantProfit = +knapsackResultantProfit + +(profitArr[i] * (knapsackCapacity / weightArr[i]));
-            tempList[tempList.indexOf(profitArr[i])] = knapsackCapacity + "/" + weightArr[i]
+            kpResultantSolutionArr[i] = knapsackCapacity + "/" + weightArr[i];
             knapsackCapacity = 0;
         }
         else {
-            tempList[tempList.indexOf(profitArr[i])] = 0;
+            kpResultantSolutionArr[i] = 0;
         }
     }
 
@@ -133,7 +132,7 @@ function knapsackAlgorithm(knapsackCapacity, profitArr, weightArr, numOfObjects)
     kpProfitId.innerHTML = profitArr;
     kpWeightId.innerHTML = weightArr;
     kpProfitWeightId.innerHTML = densityArr;
-    kpResultantSolutionId.innerHTML = tempList;
+    kpResultantSolutionId.innerHTML = kpResultantSolutionArr;
 }
 
 // applying knapsack 0/1 algorithm
