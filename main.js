@@ -1,5 +1,4 @@
 function createTable() {
-    const knapsackCapacity = document.getElementById('capacity').value;
     const numOfObjects = document.getElementById('rows').value;
     var tableHeader = '<table class="table table-bordered" id="table"> <tr><th scope="col">Items</th> <th scope="col">Profit</th> <th scope="col">Weight</th></tr>';
     var tableBody = '';
@@ -21,76 +20,66 @@ function createTable() {
     document.getElementById('wrapper').innerHTML = tableHeader + tableBody + tableFooter;
 }
 
-var weightValue, profitValue;
-var profit = [];
-var weight = [];
-var density = [];
 var tempList = [];
-var resultantSolution = [];
-var i, j, knapsackResultantProfit = 0;
 
 function generateResult() {
-
+    
     const knapsackCapacity = document.getElementById('capacity').value;
     const numOfObjects = document.getElementById('rows').value;
     
-    knapsackResultantProfit = 0;
-    profit = [];
-    weight = [];
-    density = [];
+    const profitArr = [];
+    const weightArr = [];
+
+    // Variables for storing values taken from user; before adding them to the profit and weight arrays.
+    var weightValue, profitValue;
     tempList = [];
 
     var resultClass = document.getElementsByClassName("result");
     console.log(resultClass.length);
     
-    for (i = 0; i < resultClass.length; i++) {
+    for (var i = 0; i < resultClass.length; i++) {
         resultClass[i].style.visibility = "visible";
     }
 
     var tableId = document.getElementById("table")
     for (var i = 1; i <= numOfObjects; i++) {
         profitValue = tableId.rows[i].cells[1].children[0].value;
-        profit.push(profitValue)
-        tempList.push(profitValue)
+        profitArr.push(profitValue);
+        
+        tempList.push(profitValue);
+        
         weightValue = tableId.rows[i].cells[2].children[0].value;
-        weight.push(weightValue)        
+        weightArr.push(weightValue);
     }
-    knapsack01Algorithm(knapsackCapacity, numOfObjects)
-    sortLists()
-
-    console.log("profit = " + profit);
-    console.log("weight = " + weight);
-    console.log("density = " + density);
+    knapsack01Algorithm(knapsackCapacity, profitArr, weightArr, numOfObjects);
     
-    knapsackAlgorithm(knapsackCapacity, numOfObjects);
-    
-    console.log(knapsackResultantProfit);
+    knapsackAlgorithm(knapsackCapacity, profitArr, weightArr, numOfObjects);
 
 }
 
 
-function sortLists(num_rows) {
+function sortLists(densityArr, profitArr, weightArr, numOfObjects) {
 
-    // to find density
-    for (i = 0; i < num_rows; i++) {
-        density[i] = (profit[i] / weight[i])
+    // Loop for initializing density values.
+    for (var i = 0; i < numOfObjects; i++) {
+        densityArr[i] = (profitArr[i] / weightArr[i]);
     }       
     console.log(tempList);
 
     // to sort density in decreasing order along with profit and weight list
     var list = [];
-    for (i = 0; i < num_rows; i++)
-        list.push({ 'density': density[i], 'profit': profit[i], 'weight': weight[i] });
+    for (var i = 0; i < numOfObjects; i++)
+        list.push({ 'density': densityArr[i], 'profit': profitArr[i], 'weight': weightArr[i] });
 
 
     list.sort(function (a, b) {
         return ((a.density > b.density) ? -1 : ((a.density == b.density) ? 0 : 1));
     });
 
-    for (i = 0; i < num_rows; i++) {
-        density[i] = +(list[i].density).toFixed(3)
-        profit[i] = list[i].profit;
-        weight[i] = list[i].weight;
+    for (var i = 0; i < numOfObjects; i++) {
+        densityArr[i] = +(list[i].density).toFixed(3)
+        profitArr[i] = list[i].profit;
+        weightArr[i] = list[i].weight;
     }
 }
 
@@ -102,7 +91,15 @@ function sortLists(num_rows) {
 // 20, 25, 10, 12, 5, 22, 1 
 
 // applying knapsack algorithm
-function knapsackAlgorithm(knapsackCapacity, numOfObjects) {
+function knapsackAlgorithm(knapsackCapacity, profitArr, weightArr, numOfObjects) {
+
+    // An array for storing the densities of the objects.
+    const densityArr = [];
+    sortLists(densityArr, profitArr, weightArr, numOfObjects);
+
+    // A variable for storing the resultant profit of the knapsack; initialized with 0.
+    var knapsackResultantProfit = 0;
+
 
     const kpResultantProfitId = document.getElementById("kpResultantProfit");
     const kpProfitId = document.getElementById("kpProfit");
@@ -110,31 +107,37 @@ function knapsackAlgorithm(knapsackCapacity, numOfObjects) {
     const kpProfitWeightId = document.getElementById("kpProfitWeight");
     const kpResultantSolutionId = document.getElementById("kpResultantSolution");
 
-    for (i = 0; i < numOfObjects; i++) {
-        if (weight[i] <= knapsackCapacity) {
-            knapsackCapacity -= weight[i]
-            knapsackResultantProfit += +profit[i]
-            tempList[tempList.indexOf(profit[i])] = 1
+    for (var i = 0; i < numOfObjects; i++) {
+        if (weightArr[i] <= knapsackCapacity) {
+            knapsackCapacity -= weightArr[i];
+            knapsackResultantProfit += +profitArr[i];
+            tempList[tempList.indexOf(profitArr[i])] = 1;
         }
         else if(knapsackCapacity != 0) {
-            knapsackResultantProfit = +knapsackResultantProfit + +(profit[i] * (knapsackCapacity / weight[i]))
-            tempList[tempList.indexOf(profit[i])] = knapsackCapacity + "/" + weight[i]
+            knapsackResultantProfit = +knapsackResultantProfit + +(profitArr[i] * (knapsackCapacity / weightArr[i]));
+            tempList[tempList.indexOf(profitArr[i])] = knapsackCapacity + "/" + weightArr[i]
             knapsackCapacity = 0;
         }
         else {
-            tempList[tempList.indexOf(profit[i])] = 0
+            tempList[tempList.indexOf(profitArr[i])] = 0;
         }
     }
 
+    console.log("profit = " + profitArr);
+    console.log("weight = " + weightArr);
+    console.log("density = " + densityArr);
+
+    console.log(knapsackResultantProfit);
+
     kpResultantProfitId.innerHTML = +knapsackResultantProfit.toFixed(3);
-    kpProfitId.innerHTML = profit;
-    kpWeightId.innerHTML = weight;
-    kpProfitWeightId.innerHTML = density;
+    kpProfitId.innerHTML = profitArr;
+    kpWeightId.innerHTML = weightArr;
+    kpProfitWeightId.innerHTML = densityArr;
     kpResultantSolutionId.innerHTML = tempList;
 }
 
 // applying knapsack 0/1 algorithm
-function knapsack01Algorithm(knapsackCapacity, numOfObjects) {
+function knapsack01Algorithm(knapsackCapacity, profitArr, weightArr, numOfObjects) {
 
     const kp01ResultantProfitId = document.getElementById("kp01ResultantProfit");
     const kp01ProfitId = document.getElementById("kp01Profit");
@@ -153,10 +156,10 @@ function knapsack01Algorithm(knapsackCapacity, numOfObjects) {
     const tableHeader = '<table class="table table-bordered">';
     var tableBody = '';
 
-    for (i = 1; i <= numOfObjects; i++) {
-        for (j = 0; j <= knapsackCapacity; j++) {
-            if (weight[i - 1] <= j) {
-                knapsackTable[i][j] = (Math.max(knapsackTable[i - 1][j], +knapsackTable[i - 1][j - weight[i - 1]] + +profit[i - 1]));
+    for (var i = 1; i <= numOfObjects; i++) {
+        for (var j = 0; j <= knapsackCapacity; j++) {
+            if (weightArr[i - 1] <= j) {
+                knapsackTable[i][j] = (Math.max(knapsackTable[i - 1][j], +knapsackTable[i - 1][j - weightArr[i - 1]] + +profitArr[i - 1]));
                 tableBody += '<td>';
                 tableBody += knapsackTable[i][j];
                 tableBody += '</td>'
@@ -179,7 +182,7 @@ function knapsack01Algorithm(knapsackCapacity, numOfObjects) {
 
 
     kp01ResultantProfitId.innerHTML = knapsackTable[numOfObjects][knapsackCapacity];
-    kp01ProfitId.innerHTML = profit;
-    kp01WeightId.innerHTML = weight;
+    kp01ProfitId.innerHTML = profitArr;
+    kp01WeightId.innerHTML = weightArr;
 
 }
