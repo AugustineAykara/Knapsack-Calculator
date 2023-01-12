@@ -40,12 +40,13 @@ function generateResult() {
 
     var tableId = document.getElementById("table")
     for (var i = 1; i <= numOfObjects; i++) {
-        profitValue = tableId.rows[i].cells[1].children[0].value;
+        profitValue = parseInt(tableId.rows[i].cells[1].children[0].value);
         profitArr.push(profitValue);
         
-        weightValue = tableId.rows[i].cells[2].children[0].value;
+        weightValue = parseInt(tableId.rows[i].cells[2].children[0].value);
         weightArr.push(weightValue);
     }
+
     knapsack01Algorithm(knapsackCapacity, profitArr, weightArr, numOfObjects);
     
     knapsackAlgorithm(knapsackCapacity, profitArr, weightArr, numOfObjects);
@@ -71,7 +72,7 @@ function sortLists(densityArr, profitArr, weightArr, numOfObjects) {
     });
 
     for (var i = 0; i < numOfObjects; i++) {
-        densityArr[i] = +(list[i].density).toFixed(3)
+        densityArr[i] = list[i].density;
         profitArr[i] = list[i].profit;
         weightArr[i] = list[i].weight;
     }
@@ -109,11 +110,11 @@ function knapsackAlgorithm(knapsackCapacity, profitArr, weightArr, numOfObjects)
     for (var i = 0; i < numOfObjects; i++) {
         if (weightArr[i] <= knapsackCapacity) {
             knapsackCapacity -= weightArr[i];
-            knapsackResultantProfit += +profitArr[i];
+            knapsackResultantProfit += profitArr[i];
             kpResultantSolutionArr[i] = 1;
         }
         else if(knapsackCapacity != 0) {
-            knapsackResultantProfit = +knapsackResultantProfit + +(profitArr[i] * (knapsackCapacity / weightArr[i]));
+            knapsackResultantProfit = knapsackResultantProfit + (profitArr[i] * (knapsackCapacity / weightArr[i]));
             kpResultantSolutionArr[i] = knapsackCapacity + "/" + weightArr[i];
             knapsackCapacity = 0;
         }
@@ -128,7 +129,7 @@ function knapsackAlgorithm(knapsackCapacity, profitArr, weightArr, numOfObjects)
 
     console.log(knapsackResultantProfit);
 
-    kpResultantProfitId.innerHTML = +knapsackResultantProfit.toFixed(3);
+    kpResultantProfitId.innerHTML = parseFloat(knapsackResultantProfit);
     kpProfitId.innerHTML = profitArr;
     kpWeightId.innerHTML = weightArr;
     kpProfitWeightId.innerHTML = densityArr;
@@ -158,7 +159,7 @@ function knapsack01Algorithm(knapsackCapacity, profitArr, weightArr, numOfObject
     for (var i = 1; i <= numOfObjects; i++) {
         for (var j = 0; j <= knapsackCapacity; j++) {
             if (weightArr[i - 1] <= j) {
-                knapsackTable[i][j] = (Math.max(knapsackTable[i - 1][j], +knapsackTable[i - 1][j - weightArr[i - 1]] + +profitArr[i - 1]));
+                knapsackTable[i][j] = (Math.max(knapsackTable[i - 1][j], knapsackTable[i - 1][j - weightArr[i - 1]] + profitArr[i - 1]));
                 tableBody += '<td>';
                 tableBody += knapsackTable[i][j];
                 tableBody += '</td>'
