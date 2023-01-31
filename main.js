@@ -7,12 +7,12 @@ function createTable() {
 
         tableBody += '<tbody><tr>';
         tableBody += '<td>';
-        tableBody += 'Item ' + i
-        tableBody += '</td>'
+        tableBody += 'Item ' + i;
+        tableBody += '</td>';
         for (var j = 0; j < 2; j++) {
             tableBody += '<td>';
-            tableBody += '<input type="number" class="form-control" placeholder="Value"/>'
-            tableBody += '</td>'
+            tableBody += '<input type="number" class="form-control" placeholder="Value"/>';
+            tableBody += '</td>';
         }
         tableBody += '</tr></tbody>\n';
     }
@@ -58,7 +58,14 @@ function sortLists(densityArr, profitArr, weightArr, numOfObjects) {
 
     // Loop for initializing density values.
     for (var i = 0; i < numOfObjects; i++) {
-        densityArr[i] = (profitArr[i] / weightArr[i]);
+        
+        // For detecting integer densities.
+        if(Number.isInteger( profitArr[i] / weightArr[i] )) {
+            densityArr[i] = Math.round(profitArr[i] / weightArr[i]);
+            continue;
+        }
+        densityArr[i] = (profitArr[i] / weightArr[i]).toFixed(2);
+        
     }       
 
     // to sort density in decreasing order along with profit and weight list
@@ -129,11 +136,31 @@ function knapsackAlgorithm(knapsackCapacity, profitArr, weightArr, numOfObjects)
 
     console.log(knapsackResultantProfit);
 
-    kpResultantProfitId.innerHTML = parseFloat(knapsackResultantProfit);
+    kpResultantProfitId.innerHTML = parseFloat(knapsackResultantProfit.toFixed(2));
     kpProfitId.innerHTML = profitArr;
     kpWeightId.innerHTML = weightArr;
     kpProfitWeightId.innerHTML = densityArr;
     kpResultantSolutionId.innerHTML = kpResultantSolutionArr;
+}
+
+function find01Solution(objToSelect, capLeft, solutionArr, table, numOfObjects, profitArr, weightArr) {
+    // The base case will be reached in any scenario because the 0th row is initialized with 0 values.
+    if( objToSelect == 0 ) {
+        return;
+    }
+
+    // The current object is not selected.
+    if(table[objToSelect][capLeft] == table[objToSelect - 1][capLeft]) {
+        solutionArr[objToSelect - 1] = 0;
+        find01Solution(objToSelect - 1, capLeft, solutionArr, table, numOfObjects, profitArr, weightArr);
+    }
+    else if(capLeft >= weightArr[objToSelect - 1]) {
+        // The current object is selected.
+        if( table[objToSelect][capLeft] == (table[objToSelect - 1][capLeft - weightArr[objToSelect - 1]] + profitArr[objToSelect - 1]) ) {
+            solutionArr[objToSelect - 1] = 1;
+            find01Solution(objToSelect - 1, capLeft - weightArr[objToSelect - 1], solutionArr, table, numOfObjects, profitArr, weightArr);
+        }
+    }
 }
 
 // applying knapsack 0/1 algorithm
@@ -144,30 +171,39 @@ function knapsack01Algorithm(knapsackCapacity, profitArr, weightArr, numOfObject
     const kp01WeightId = document.getElementById("kp01Weight");
     const kp01ResultantSolutionId = document.getElementById("kp01ResultantSolution");
 
-    var knapsackTable = new Array(numOfObjects)
-    for (i = 0; i <= numOfObjects; i++) {
+    var knapsackTable = new Array(numOfObjects + 1);
 
-        knapsackTable[i] = Array(knapsackCapacity)
-        for (j = 0; j <= knapsackCapacity; j++) {
-            knapsackTable[i][j] = 0;
+    for (objConsidered = 0; objConsidered <= numOfObjects; objConsidered++) {
+
+        knapsackTable[objConsidered] = Array(knapsackCapacity + 1);
+        for (capConsidered = 0; capConsidered <= knapsackCapacity; capConsidered++) {
+            knapsackTable[objConsidered][capConsidered] = 0;
         }
     }
 
     const tableHeader = '<table class="table table-bordered">';
     var tableBody = '';
 
-    for (var i = 1; i <= numOfObjects; i++) {
-        for (var j = 0; j <= knapsackCapacity; j++) {
-            if (weightArr[i - 1] <= j) {
-                knapsackTable[i][j] = (Math.max(knapsackTable[i - 1][j], knapsackTable[i - 1][j - weightArr[i - 1]] + profitArr[i - 1]));
+    for (var objConsidered = 0; objConsidered <= numOfObjects; objConsidered++) {
+        for (var capConsidered = 0; capConsidered <= knapsackCapacity; capConsidered++) {
+            
+            if(objConsidered == 0) {
+                continue;
+            }
+
+            if (weightArr[objConsidered - 1] <= capConsidered) {
+                knapsackTable[objConsidered][capConsidered] = 
+                (Math.max(
+                    knapsackTable[objConsidered - 1][capConsidered], 
+                    knapsackTable[objConsidered - 1][capConsidered - weightArr[objConsidered - 1]] + profitArr[objConsidered - 1]));
                 tableBody += '<td>';
-                tableBody += knapsackTable[i][j];
+                tableBody += knapsackTable[objConsidered][capConsidered];
                 tableBody += '</td>'
             }
             else {
-                knapsackTable[i][j] = knapsackTable[i - 1][j]
+                knapsackTable[objConsidered][capConsidered] = knapsackTable[objConsidered - 1][capConsidered]
                 tableBody += '<td>';
-                tableBody += knapsackTable[i][j];
+                tableBody += knapsackTable[objConsidered][capConsidered];
                 tableBody += '</td>'
             }
         }
@@ -177,12 +213,18 @@ function knapsack01Algorithm(knapsackCapacity, profitArr, weightArr, numOfObject
     const tableFooter = '</table>';
     document.getElementById('knapsackTable').innerHTML = tableHeader + tableBody + tableFooter;
 
-    console.log(knapsackTable);
-    console.log(knapsackTable[numOfObjects][knapsackCapacity]);
+    // console.log(knapsackTable);
+    // console.log(knapsackTable[numOfObjects][knapsackCapacity]);
+
+    var solutionArr = [];
+    for(let i = 0; i < numOfObjects; i++) {
+        solutionArr.push(0);
+    }
+    find01Solution(parseInt(numOfObjects), parseInt(knapsackCapacity), solutionArr, knapsackTable, parseInt(numOfObjects), profitArr, weightArr);
 
 
     kp01ResultantProfitId.innerHTML = knapsackTable[numOfObjects][knapsackCapacity];
     kp01ProfitId.innerHTML = profitArr;
     kp01WeightId.innerHTML = weightArr;
-
+    kp01ResultantSolutionId.innerHTML = solutionArr;
 }
